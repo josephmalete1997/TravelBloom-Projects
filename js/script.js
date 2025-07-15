@@ -1,4 +1,3 @@
-// Travel recommendations data for initial display
 const recommendations = [
     {
         id: 1,
@@ -128,7 +127,6 @@ const recommendations = [
     }
 ];
 
-// DOM Elements
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
@@ -138,22 +136,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('detailsModal');
     const closeModal = document.getElementById('closeModal');
     
-    // Create modal if it doesn't exist
     if (!modal) {
         createModal();
     }
 
-    // Initialize with some recommendations
     displayRecommendations(recommendations);
 
-    // Search functionality
     if (searchBtn) {
         searchBtn.addEventListener('click', function() {
             performSearch();
         });
     }
 
-    // Enter key for search
     if (searchInput) {
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -162,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to perform search
     function performSearch() {
         const searchTerm = searchInput.value.toLowerCase().trim();
         
@@ -171,21 +164,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Show loading state
         if (recommendationResults) {
             recommendationResults.innerHTML = '<div class="loading">Searching for destinations...</div>';
-            
-            // Scroll to results section
             recommendationResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         
-        // Use external API for search
         searchDestinations(searchTerm)
             .then(results => {
                 if (results.length > 0) {
                     displayRecommendations(results);
                 } else {
-                    // Fallback to local search if API returns no results
                     const filteredRecommendations = recommendations.filter(rec => {
                         return rec.name.toLowerCase().includes(searchTerm) || 
                                rec.location.toLowerCase().includes(searchTerm) || 
@@ -196,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayRecommendations(filteredRecommendations);
                 }
                 
-                // Scroll to results after they're loaded
                 if (recommendationResults) {
                     recommendationResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
@@ -204,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Search error:', error);
                 
-                // Fallback to local search if API fails
                 const filteredRecommendations = recommendations.filter(rec => {
                     return rec.name.toLowerCase().includes(searchTerm) || 
                            rec.location.toLowerCase().includes(searchTerm) || 
@@ -214,26 +200,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 displayRecommendations(filteredRecommendations);
                 
-                // Scroll to results after they're loaded
                 if (recommendationResults) {
                     recommendationResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
     }
 
-    // Function to search destinations using API
     async function searchDestinations(query) {
-        // For demonstration purposes, we'll simulate an API call
-        // In a real application, you would replace this with an actual API call
-        
-        // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // For this demo, we'll use the Unsplash API format but with our local data
-        // In a real application, you would use a travel API like TripAdvisor, Amadeus, etc.
-        
         try {
-            // Simulate API response with our local data + additional data from query
             const results = recommendations.filter(rec => {
                 return rec.name.toLowerCase().includes(query) || 
                        rec.location.toLowerCase().includes(query) || 
@@ -241,10 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
                        rec.description.toLowerCase().includes(query);
             });
             
-            // If we have results, add additional location data
             if (results.length > 0) {
-                // In a real application, you would fetch additional data from APIs
-                // like weather, currency exchange rates, local events, etc.
                 return results.map(result => {
                     return {
                         ...result,
@@ -255,10 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
             
-            // If no results from our data, create a simulated API response
-            // In a real application, this would come from an external API
             if (query.length > 2) {
-                // Use Pixabay API for more reliable images
                 const image1 = await fetchPixabayImage(query, 'travel');
                 const image2 = await fetchPixabayImage(query, 'landmark');
                 
@@ -297,9 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Function to fetch images from Pixabay API
     async function fetchPixabayImage(query, category) {
-        // Pixabay API key - in a real application, this would be stored securely
         const apiKey = '39936477-2b4a1f9d5b4c6a2e7d1e3f2c8';
         const url = `https://pixabay.com/api/?key=${apiKey}&q=${encodeURIComponent(query + ' ' + category)}&image_type=photo&per_page=3`;
         
@@ -308,7 +275,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             if (data.hits && data.hits.length > 0) {
-                // Return a random image from the results
                 const randomIndex = Math.floor(Math.random() * Math.min(3, data.hits.length));
                 return data.hits[randomIndex].largeImageURL;
             }
@@ -320,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Helper functions for simulated API
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
@@ -379,7 +344,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `Traditional ${capitalizeFirstLetter(location)} Celebration`
         ];
         
-        // Return 1-3 random events
         const numEvents = Math.floor(Math.random() * 3) + 1;
         const selectedEvents = [];
         
@@ -394,7 +358,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function getExchangeRate(currency) {
-        // Simulate exchange rates against USD
         const rates = {
             'USD': 1.0,
             'EUR': 0.85,
@@ -415,7 +378,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return rates[currency] || Math.random() * 10 + 1;
     }
 
-    // Clear search
     if (clearBtn) {
         clearBtn.addEventListener('click', function() {
             searchInput.value = '';
@@ -423,7 +385,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Email form submission
     if (emailForm) {
         emailForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -433,16 +394,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const subject = document.getElementById('subject').value;
             const message = document.getElementById('message').value;
             
-            // In a real application, you would send this data to a server
             console.log('Form submitted:', { name, email, subject, message });
             
-            // Show success message
             showNotification('Thank you for your message! We will get back to you soon.');
             emailForm.reset();
         });
     }
 
-    // Function to display recommendations
     function displayRecommendations(recs) {
         if (!recommendationResults) return;
         
@@ -457,7 +415,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'recommendation-card';
             
-            // Check if the recommendation has weather data (from API)
             const hasApiData = rec.weather || rec.localEvents || rec.exchangeRate;
             
             let localInfoHTML = '';
@@ -472,7 +429,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             }
             
-            // Add weather and events if available
             let weatherHTML = '';
             if (rec.weather) {
                 weatherHTML = `
@@ -509,7 +465,6 @@ document.addEventListener('DOMContentLoaded', function() {
             recommendationResults.appendChild(card);
         });
         
-        // Add event listeners to view details buttons
         const viewDetailsButtons = document.querySelectorAll('.view-details');
         viewDetailsButtons.forEach(button => {
             button.addEventListener('click', function(e) {
@@ -524,7 +479,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to create modal
     function createModal() {
         const modalHTML = `
             <div id="detailsModal" class="modal">
@@ -541,14 +495,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(modalContainer);
     }
 
-    // Function to show recommendation details in modal
     function showRecommendationDetails(recommendation) {
         const modal = document.getElementById('detailsModal');
         const modalContent = document.getElementById('modalContent');
         
         if (!modal || !modalContent) return;
         
-        // Build local information section
         let localInfoHTML = '';
         if (recommendation.localInfo) {
             localInfoHTML = `
@@ -564,7 +516,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
         
-        // Add weather if available
         let weatherHTML = '';
         if (recommendation.weather) {
             weatherHTML = `
@@ -578,7 +529,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
         
-        // Add local events if available
         let eventsHTML = '';
         if (recommendation.localEvents && recommendation.localEvents.length > 0) {
             const eventsList = recommendation.localEvents.map(event => `<li>${event}</li>`).join('');
@@ -592,7 +542,6 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
         
-        // Add map if coordinates are available
         let mapHTML = '';
         if (recommendation.coordinates) {
             mapHTML = `
@@ -604,9 +553,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             height="250" 
                             frameborder="0" 
                             style="border:0" 
-                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAeQC-x6gxLgvP6GNXyJnz2GFBD8vKZ-wM&q=${recommendation.coordinates.latitude},${recommendation.coordinates.longitude}" 
+                            src="https://www.openstreetmap.org/export/embed.html?bbox=${recommendation.coordinates.longitude-0.1}%2C${recommendation.coordinates.latitude-0.1}%2C${recommendation.coordinates.longitude+0.1}%2C${recommendation.coordinates.latitude+0.1}&amp;layer=mapnik&amp;marker=${recommendation.coordinates.latitude}%2C${recommendation.coordinates.longitude}" 
                             allowfullscreen>
                         </iframe>
+                        <small>
+                            <a href="https://www.openstreetmap.org/?mlat=${recommendation.coordinates.latitude}&amp;mlon=${recommendation.coordinates.longitude}#map=12/${recommendation.coordinates.latitude}/${recommendation.coordinates.longitude}" target="_blank">View larger map</a>
+                        </small>
                     </div>
                 </div>
             `;
@@ -637,10 +589,8 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Show modal
         modal.style.display = 'block';
         
-        // Add event listeners to thumbnails
         const thumbnails = document.querySelectorAll('.modal-thumbnail');
         const images = document.querySelectorAll('.modal-image');
         
@@ -648,17 +598,14 @@ document.addEventListener('DOMContentLoaded', function() {
             thumbnail.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
                 
-                // Update active state for thumbnails
                 thumbnails.forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
                 
-                // Update active state for images
                 images.forEach(img => img.classList.remove('active'));
                 images[index].classList.add('active');
             });
         });
         
-        // Close modal when clicking the close button
         const closeModal = document.getElementById('closeModal');
         if (closeModal) {
             closeModal.addEventListener('click', function() {
@@ -666,7 +613,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Close modal when clicking outside the modal content
         window.addEventListener('click', function(e) {
             if (e.target === modal) {
                 modal.style.display = 'none';
@@ -674,7 +620,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Function to show notification
     function showNotification(message) {
         const notification = document.getElementById('notification');
         if (!notification) return;
@@ -688,7 +633,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
